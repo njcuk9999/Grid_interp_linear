@@ -13,7 +13,39 @@ import itertools
 # ==============================================================================
 
 class linear_interp(object):
+    """
+    The data must be defined on a regular grid; the grid spacing however
+    may be uneven. After setting up the interpolator object.
+
+    Data may be irregular and filled with NaN (will linearly fit to nearest
+    point in that dimension
+
+    Parameters
+    ----------
+    points : tuple of ndarray of float, with shapes (m1, ), ..., (mn, )
+        The points defining the regular grid in n dimensions.
+
+    values : array_like, shape (m1, ..., mn, ...)
+        The data on the regular grid in n dimensions.
+    """
     def __init__(self, points, values):
+        """
+        The data must be defined on a regular grid; the grid spacing however
+        may be
+        uneven.  Linear and nearest-neighbour interpolation are supported. After
+        setting up the interpolator object, the interpolation method (
+        *linear* or
+        *nearest*) may be chosen at each evaluation.
+
+        Parameters
+        ----------
+        :param points: tuple of ndarray of float, with shapes
+                           (m1, ), ..., (mn, )
+                       The points defining the regular grid in n dimensions.
+
+        :param values : array_like, shape (m1, ..., mn, ...)
+                        The data on the regular grid in n dimensions.
+        """
         self.grid = tuple([np.asarray(p) for p in points])
         self.values = values
         self.pdim = values.shape[-1]
