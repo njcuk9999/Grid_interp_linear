@@ -22,16 +22,37 @@ class linear_interp(object):
 ### Example Code
 
 ```python
-
+import numpy as np
 import matplotlib.pyplot as plt
 from scipy import interpolate
 import time
 
+# -----------------------------------------------------------------------------
+# set up grid
+gridparams = dict()
+gridparams['logg'] = np.arange(3, 6+0.5, 0.5) 
+gridparams['Z'] = np.arange(-3, 1+0.5, 0.5) 
+gridparams['teff'] = np.arange(2500, 4500+100, 100)
+gridparams['alpha'] = np.arange(-0.4, 0.4+0.1, 0.1)
+
+# -----------------------------------------------------------------------------
+# load the modelgrid (models loaded from file into a N 
+# dimension numpy array (shape = MxQxRxSxT), where N is the number of 
+# fit parameters, M, Q, R, S are the size of each grid parameter
+# (for which there is a model with T points)
+# here N = 4 and I set up a random grid of shape
+modelgrid = np.random.random(7*9*21*9*100).reshape([7, 9, 21, 9, 100])
+# here I simulate a model with all NaN which would break the normal 
+# RegularGridInterpolator but will work here
+modelgrid[5][5][5][5] = np.repeat(np.nan, 100)
+
+# -----------------------------------------------------------------------------
+# then we run the old and new interps
 ipo_new = linear_interp(gridparams.values(), modelgrid)
+ipo_old = interpolate.RegularGridInterpolator(gridparams.values(), modelgrid)
 
-ipo_old = interpolate.RegularGridInterpolator(gridparams.values(),
-                                              modelgrid)
-
+# -----------------------------------------------------------------------------
+# The rest is testing the speeds of these functions and plotting the results
 pss = [[5.0, -0.5, 3300.0, 0.2], [5.0, -0.5, 3350.0, 0.2],
        [5.0, -0.5, 3400.0, 0.2], [5.0, -0.5, 3500.0, 0.2],
        [5.0, -0.5, 3550.0, 0.2], [5.0, -0.5, 3600.0, 0.2],
